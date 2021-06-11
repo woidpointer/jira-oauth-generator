@@ -65,7 +65,8 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
                 *changed line* ->   hashBytes = SHA1(bytearray(bytes))
                 to ->               hashBytes = SHA1(bytearray(bytes, "utf8"))
         '''
-        signature = privatekey.hashAndSign(raw)
+        # Bugfix to solve an encoding issue in tlslite
+        signature = privatekey.hashAndSign(bytearray(raw, 'utf8'))
 
         return base64.b64encode(signature)
 
