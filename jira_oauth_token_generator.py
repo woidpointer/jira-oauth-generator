@@ -1,7 +1,7 @@
 '''
 * Original implementation is available here: https://bitbucket.org/atlassian_tutorial/atlassian-oauth-examples under python/app.py
 * Copied here as jira_oauth_token_generator.py with modifications:
-    * Since we are not able to resolve SSL Certification problem, let's disable ssl certificate validation for each REST api call. 
+    * Since we are not able to resolve SSL Certification problem, let's disable ssl certificate validation for each REST api call.
 	  client.disable_ssl_certificate_validation = True
 	* Strangely first time (before you approve request in browser) when you access data_url, browser returns 200 response with content of zero bytes instead of 401 response as original code says. Hence I've commented out response code validation for this part.
 	* Also I've refactored and removed SignatureMethod_RSA_SHA1 into it's own file. This way we can import it into any other python program!
@@ -12,7 +12,7 @@
     * config/ directory contain "starter_oauth.config" file with following details:
         jira_base_url=<JIRA Application URL>
         consumer_key=<enter as registered by your Jira Admin during Application Link creation>
-    *    
+    *
 '''
 
 import base64
@@ -119,6 +119,7 @@ if resp['status'] != '401':
 
 consumer = oauth.Consumer(consumer_key, consumer_secret)
 client = oauth.Client(consumer)
+client.disable_ssl_certificate_validation = True
 client.set_signature_method(SignatureMethod_RSA_SHA1())
 
 # Step 1: Get a request token. This is a temporary token that is used for
@@ -163,6 +164,7 @@ token = oauth.Token(request_token['oauth_token'],
                     request_token['oauth_token_secret'])
 # token.set_verifier(oauth_verifier)
 client = oauth.Client(consumer, token)
+client.disable_ssl_certificate_validation = True
 client.set_signature_method(SignatureMethod_RSA_SHA1())
 
 resp, content = client.request(access_token_url, "POST")
@@ -186,6 +188,7 @@ print("")
 accessToken = oauth.Token(access_token['oauth_token'],
                           access_token['oauth_token_secret'])
 client = oauth.Client(consumer, accessToken)
+client.disable_ssl_certificate_validation = True
 client.set_signature_method(SignatureMethod_RSA_SHA1())
 
 resp, content = client.request(data_url, "GET")
